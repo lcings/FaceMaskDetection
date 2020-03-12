@@ -1,0 +1,38 @@
+﻿  opencv_base_project.cpp
+opencv_base_project.cpp(20): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(25): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(39): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(40): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(41): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(42): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(43): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(48): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(52): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(53): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(54): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(55): warning C4244: “参数”: 从“double”转换到“float”，可能丢失数据
+opencv_base_project.cpp(69): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+opencv_base_project.cpp(85): warning C4838: 从“double”转换到“float”需要收缩转换
+opencv_base_project.cpp(85): warning C4305: “初始化”: 从“double”到“float”截断
+opencv_base_project.cpp(186): warning C4305: “初始化”: 从“double”到“float”截断
+opencv_base_project.cpp(215): warning C4305: “参数”: 从“double”到“float”截断
+opencv_base_project.cpp(223): warning C4305: “参数”: 从“double”到“float”截断
+opencv_base_project.cpp(224): warning C4305: “参数”: 从“double”到“float”截断
+opencv_base_project.cpp(234): warning C4305: “参数”: 从“double”到“float”截断
+opencv_base_project.cpp(235): warning C4305: “参数”: 从“double”到“float”截断
+opencv_base_project.cpp(271): warning C4267: “参数”: 从“size_t”转换到“int”，可能丢失数据
+opencv_base_project.cpp(285): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+opencv_base_project.cpp(286): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+opencv_base_project.cpp(287): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+opencv_base_project.cpp(288): warning C4244: “初始化”: 从“float”转换到“int”，可能丢失数据
+opencv_base_project.cpp(278): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: 参见“sprintf”的声明
+opencv_base_project.cpp(282): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: 参见“sprintf”的声明
+opencv_base_project.cpp(291): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: 参见“sprintf”的声明
+  正在生成代码
+  All 864 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成代码的生成
+  opencv_base_project.vcxproj -> C:\Users\lcings\Desktop\FaceMaskDetection000\x64\Release\opencv_base_project.exe
+  opencv_base_project.vcxproj -> C:\Users\lcings\Desktop\FaceMaskDetection000\x64\Release\opencv_base_project.pdb (Full PDB)
