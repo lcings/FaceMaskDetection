@@ -1,3 +1,3 @@
 # FaceMaskDetection
-FaceMaskDetection Implementation with caffe C++
+FaceMaskDetection Implementation with opencv C++
 from https://github.com/AIZOOTech/FaceMaskDetection
