@@ -5,7 +5,7 @@ using namespace std;
 #define RUN_TYPE_IMAGE        0
 #define RUN_TYPE_VIDEO        1
 
-#define USE_RUN_TYPE RUN_TYPE_VIDEO
+#define USE_RUN_TYPE RUN_TYPE_IMAGE
 
 vector<vector<float>> generate_anchors(const vector<float> &ratios, const vector<int> &scales, vector<float> &anchor_base)
 {
@@ -78,22 +78,28 @@ vector<vector<float>> generate_anchors(const vector<float> &ratios, const vector
     return anchors;
 }
 
-vector<cv::Rect> decode_bbox(vector<vector<float>> &anchors, float *delta, int img_w, int img_h)
+vector<cv::Rect> decode_bbox_classes(vector<vector<float>> &anchors, float *delta, int img_w, int img_h, float thresh, float *score,
+    vector<int> &out_classes, vector <float>&out_scores)
 {
     vector<cv::Rect> rects;
     float v[4] = { 0.1, 0.1, 0.2, 0.2 };
+    for (int n = 0; n < anchors.size(); n++) {
+        
+        float m_score = max(score[2 * n], score[2 * n + 1]);
+        if (m_score < thresh) {
+            continue;
+        }
 
-    int i = 0;
-    for (vector<float>& k : anchors) {
+        vector<float>& k = anchors[n];
         float acx = (k[0] + k[2]) / 2;
         float acy = (k[1] + k[3]) / 2;
         float acw = (k[2] - k[0]);
         float ach = (k[3] - k[1]);
 
-        float r0 = delta[i++] * v[i % 4];
-        float r1 = delta[i++] * v[i % 4];
-        float r2 = delta[i++] * v[i % 4];
-        float r3 = delta[i++] * v[i % 4];
+        float r0 = delta[n * 4 + 0] * v[0];
+        float r1 = delta[n * 4 + 1] * v[1];
+        float r2 = delta[n * 4 + 2] * v[2];
+        float r3 = delta[n * 4 + 3] * v[3];
 
         float centet_x = r0 * acw + acx;
         float centet_y = r1 * ach + acy;
@@ -105,37 +111,20 @@ vector<cv::Rect> decode_bbox(vector<vector<float>> &anchors, float *delta, int i
         w *= img_w;
         h *= img_h;
         rects.push_back(cv::Rect(x, y, w, h));
+
+        int m_class = score[2 * n] > score[2 * n + 1] ? 0 : 1;
+        out_classes.push_back(m_class);
+        out_scores.push_back(m_score);
+
     }
 
     return rects;
 }
 
-vector<int> mns_cv_dnn(vector<cv::Rect> &rects, float *confidences, int c_len, vector<int> &classes, vector <float>&scores)
-{
-    vector<int> keep_idxs;
-    float conf_thresh = 0.75;
-    float iou_thresh = 0.7;
-    if (rects.size() <= 0) {
-        return keep_idxs;
-    }
-    
-    for (int i = 0; i < c_len; i += 2) {
-        float max = confidences[i];
-        int classess = 0;
-        if (max < confidences[i + 1]) {
-            max = confidences[i + 1];
-            classess = 1;
-        }
-        classes.push_back(classess);
-        scores.push_back(max);
-    }
-
-    cv::dnn::NMSBoxes(rects, scores, conf_thresh, 1.0 - iou_thresh, keep_idxs);
-    return keep_idxs;
-}
-
 int main()
 {
+    float conf_thresh = 0.75;
+    float iou_thresh = 0.7;
     vector<float> anchor_base = { (float)0.04, (float)0.056 };
     vector<float> ratios = { (float)1.0, (float)0.62, (float)0.42 };
     vector<int> scales = { 33, 17, 9, 5, 3 };
@@ -160,7 +149,7 @@ int main()
             break;
         }
 #endif
-
+        double time = static_cast<double>(cv::getTickCount());
         cv::Mat rgb_img;
         cvtColor(img, rgb_img, cv::COLOR_BGR2RGB);
         cv::Mat input_blob = cv::dnn::blobFromImage(rgb_img, 1 / 255.0, cv::Size(260, 260), cv::Scalar(0, 0, 0), false);
@@ -175,15 +164,16 @@ int main()
         cv::Mat feature_bboxes = targets_blobs[0];
         cv::Mat feature_score = targets_blobs[1];
         float *bboxes = (float*)feature_bboxes.data;
-        float *confidences = (float*)feature_score.data;
-
-        vector<cv::Rect> rects = decode_bbox(anchors, bboxes, rgb_img.cols, rgb_img.rows);
+        float *confs = (float*)feature_score.data;
         vector<int> classes;
         vector <float> scores;
-        vector<int> keep_idxs = mns_cv_dnn(rects, confidences, feature_score.total(), classes, scores);
+        vector<cv::Rect> rects = decode_bbox_classes(anchors, bboxes, rgb_img.cols, rgb_img.rows, conf_thresh, confs, classes, scores);
+        vector<int> keep_idxs;
+        cv::dnn::NMSBoxes(rects, scores, conf_thresh, 1.0 - iou_thresh, keep_idxs);
+        time = ((double)cv::getTickCount() - time) / cv::getTickFrequency() * 1000;
 
+        char str[64];
         for (int i : keep_idxs) {
-            char str[64];
             cv::Scalar str_coclr;
             if (classes[i] == 0) {
                 snprintf(str, 64, "mask");
@@ -200,7 +190,8 @@ int main()
             cv::putText(img, str, cv::Point(r.x, r.y + 10), 1, 0.8, cv::Scalar(255, 255, 255));
             cv::rectangle(img, r, cv::Scalar(0, 255, 255));
         }
-
+        snprintf(str, 64, "fps:%d", 1000 / (int)time);
+        cv::putText(img, str, cv::Point(0, 12), 1, 1.2, cv::Scalar(180, 180, 180));
         cv::imshow("img", img);
 
 #if (USE_RUN_TYPE == RUN_TYPE_IMAGE)
